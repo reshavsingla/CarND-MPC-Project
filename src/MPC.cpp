@@ -6,7 +6,7 @@
 using CppAD::AD;
 
 // TODO: Set the timestep length and duration
-size_t N = 10;
+size_t N = 15;
 double dt = 0.1;
 
 // This value assumes the model presented in the classroom is used.
@@ -21,7 +21,7 @@ double dt = 0.1;
 // This is the length from front to CoG that has a similar radius.
 const double Lf = 2.67;
 
-double ref_v = 50;
+double ref_v = 50 * 0.44704;
 
 size_t x_start = 0;
 size_t y_start = x_start + N;
@@ -51,13 +51,13 @@ class FG_eval {
     // The part of the cost based on the reference state.
     for (int t = 0; t < N; t++) {
       fg[0] +=  CppAD::pow(vars[cte_start + t], 2);
-      fg[0] +=  15 * CppAD::pow(vars[epsi_start + t], 2);
+      fg[0] +=  125 * CppAD::pow(vars[epsi_start + t], 2);
       fg[0] +=  CppAD::pow(vars[v_start + t] - ref_v, 2);
     }
 
     // Minimize the use of actuators.
     for (int t = 0; t < N - 1; t++) {
-      fg[0] +=  CppAD::pow(vars[delta_start + t], 2);
+      fg[0] +=  20 * CppAD::pow(vars[delta_start + t], 2);
       fg[0] +=  CppAD::pow(vars[a_start + t], 2);
     }
 
@@ -266,8 +266,8 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // {...} is shorthand for creating a vector, so auto x1 = {1.0,2.0}
   // creates a 2 element double vector.
     vector <double > result;
-    result.push_back(solution.x[delta_start]);
-    result.push_back(solution.x[a_start]);
+    result.push_back(solution.x[delta_start + 1]);
+    result.push_back(solution.x[a_start + 1]);
 
     for (int j = 0; j < N - 1; ++j) {
         result.push_back(solution.x[x_start + 1 + j]);

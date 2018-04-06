@@ -114,7 +114,7 @@ int main() {
             px = 0;
             py = 0;
             psi = 0;
-
+            v *= 0.44704;
 
             auto coeffs = polyfit(xvals, yvals, 3);
           double cte = polyeval(coeffs, px) - py;

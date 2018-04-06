@@ -21,9 +21,11 @@ The cost function is calculated by taking in consideration the cte, epsi, refere
 
 
 # Timestep Length and Elapsed Duration (N & dt)
-I initialized the length `N=10` and `dt=0.1`. I tried various values for N ranging from 10 to 25 and dt from 0.05 to 0.2.
+I initialized the length `N=15` and `dt=0.1`. I tried various values for N ranging from 10 to 25 and dt from 0.05 to 0.2.
 These values gave the best result and gave enough view in cars trajectory in the future.
 
+The value of N helps in optimizing the computational time. Larger the value more the computational time.
+The smaller dt helps in decreasing the total time duration for which we are mapping trajectory leading to decrease in prediction error.
 
 # Polynomial Fitting and MPC Preprocessing
 
@@ -44,8 +46,12 @@ Also  I initialized the state vector with x = 0,y = 0 and psi = 0 as everything 
 
 
 # Model Predictive Control with Latency
-To account the latency the solution from the solver is used at a t=0.1s delay.
+To account the latency the solution from the solver is used at a t=0.1s delay. As dt is 0.1s we use the values given after 1 step.
 
+    `
+    result.push_back(solution.x[delta_start + 1]);
+    result.push_back(solution.x[a_start + 1]);
+    `
 
 
 
