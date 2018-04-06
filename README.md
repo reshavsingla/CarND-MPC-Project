@@ -1,3 +1,52 @@
+[Final Video](https://github.com/reshavsingla/CarND-MPC-Project/blob/master/video/final_480.mp4)
+
+
+# The Model
+The state of the car is defined by `[x,y,psi,v,cte,epsi]` where x and y is the current position of the car, psi is the direction of the car,v is the velocity, cte is the cross track error i.e the current location of car - the ideal location and epsi is the difference between the current direction of the car - ideal direction.
+
+The actuators of the car are defined by `[delta,a]` where delta is the steering angle between [-25,25] and a is the throttle between [-1.1].
+
+The update equations are given by
+       `
+        x[t+1] = x[t] + v[t] * cos(psi[t]) * dt
+        y[t+1] = y[t] + v[t] * sin(psi[t]) * dt
+        psi[t+1] = psi[t] + v[t] / Lf * delta[t] * dt
+        v[t+1] = v[t] + a[t] * dt
+        cte[t+1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt
+        epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt
+
+       `
+
+The cost function is calculated by taking in consideration the cte, epsi, reference velocity, actuators, and sequential change in actuators. I have kept the weight of sequential change in actuator delta high for smooth change in steering angles.
+
+
+# Timestep Length and Elapsed Duration (N & dt)
+I initialized the length `N=10` and `dt=0.1`. I tried various values for N ranging from 10 to 25 and dt from 0.05 to 0.2.
+These values gave the best result and gave enough view in cars trajectory in the future.
+
+
+# Polynomial Fitting and MPC Preprocessing
+
+I have converted the waypoints from the map coordinate system to car coordinate system.
+I used the transformation model learned in PID module to do so. Here is the code I used
+            `
+            for(int i = 0 ;i < ptsx.size();i++){
+                double dx = ptsx[i] - px;
+                double dy = ptsy[i] - py;
+                xvals[i] = dx * cos(-psi) - dy * sin(-psi);
+                yvals[i] =  dy * cos(-psi) + dx * sin(-psi);
+            }
+            `
+I used the resulting point to fit a 3rd degree polynomial.
+Also  I initialized the state vector with x = 0,y = 0 and psi = 0 as everything was in car coordinate system with car as the origin and direction of car as the x axis.
+
+
+# Model Predictive Control with Latency
+To account the latency the solution from the solver is used at a t=0.1s delay.
+
+
+
+
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
 
