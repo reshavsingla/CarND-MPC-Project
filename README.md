@@ -7,6 +7,7 @@ The state of the car is defined by `[x,y,psi,v,cte,epsi]` where x and y is the c
 The actuators of the car are defined by `[delta,a]` where delta is the steering angle between [-25,25] and a is the throttle between [-1.1].
 
 The update equations are given by
+
        `
         x[t+1] = x[t] + v[t] * cos(psi[t]) * dt
         y[t+1] = y[t] + v[t] * sin(psi[t]) * dt
@@ -14,7 +15,6 @@ The update equations are given by
         v[t+1] = v[t] + a[t] * dt
         cte[t+1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt
         epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt
-
        `
 
 The cost function is calculated by taking in consideration the cte, epsi, reference velocity, actuators, and sequential change in actuators. I have kept the weight of sequential change in actuator delta high for smooth change in steering angles.
@@ -29,6 +29,7 @@ These values gave the best result and gave enough view in cars trajectory in the
 
 I have converted the waypoints from the map coordinate system to car coordinate system.
 I used the transformation model learned in PID module to do so. Here is the code I used
+
             `
             for(int i = 0 ;i < ptsx.size();i++){
                 double dx = ptsx[i] - px;
@@ -37,6 +38,7 @@ I used the transformation model learned in PID module to do so. Here is the code
                 yvals[i] =  dy * cos(-psi) + dx * sin(-psi);
             }
             `
+            
 I used the resulting point to fit a 3rd degree polynomial.
 Also  I initialized the state vector with x = 0,y = 0 and psi = 0 as everything was in car coordinate system with car as the origin and direction of car as the x axis.
 
